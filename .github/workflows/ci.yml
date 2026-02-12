@@ -36,15 +36,13 @@ jobs:
       RUST_BACKTRACE: 1
     steps:
       - uses: actions/checkout@v4
-      - name: Setup EF test fixtures
-        run: ./scripts/setup_ef_tests.sh
       - uses: dtolnay/rust-toolchain@stable
       - uses: taiki-e/install-action@nextest
       - uses: Swatinem/rust-cache@v2
         with:
           cache-on-failure: true
       - name: Run EF tests
-        run: cargo nextest run --no-fail-fast -p ef-tests --release --features "asm-keccak ef-tests"
+        run: ./scripts/run_ef_tests.sh
 
   no-std:
     name: no_std (RISC-V)
