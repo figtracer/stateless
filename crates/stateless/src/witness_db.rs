@@ -1,15 +1,17 @@
-//! Provides the [`WitnessDatabase`] type, an implementation of [`reth_revm::Database`]
+//! Provides the [`WitnessDatabase`] type, an implementation of [`revm_database_interface::Database`]
 //! specifically designed for stateless execution environments.
 
+use crate::error::WitnessDbError;
 use crate::trie::StatelessTrie;
 use alloc::{collections::btree_map::BTreeMap, format};
 use alloy_primitives::{Address, B256, U256, map::B256Map};
-use reth_errors::ProviderError;
-use reth_revm::{Database, bytecode::Bytecode, state::AccountInfo};
+use revm_bytecode::Bytecode;
+use revm_database_interface::Database;
+use revm_state::AccountInfo;
 
 /// An EVM database implementation backed by witness data.
 ///
-/// This struct implements the [`reth_revm::Database`] trait, allowing the EVM to execute
+/// This struct implements the [`revm_database_interface::Database`] trait, allowing the EVM to execute
 /// transactions using:
 ///  - Account and storage slot data provided by a [`StatelessTrie`] implementation.
 ///  - Bytecode and ancestor block hashes provided by in-memory maps.
@@ -63,7 +65,7 @@ where
     T: StatelessTrie,
 {
     /// The database error type.
-    type Error = ProviderError;
+    type Error = WitnessDbError;
 
     /// Get basic account information by hashing the address and looking up the account RLP
     /// in the underlying [`StatelessTrie`] implementation.
@@ -93,7 +95,7 @@ where
     /// Returns an error if the bytecode for the given hash is not found in the map.
     fn code_by_hash(&mut self, code_hash: B256) -> Result<Bytecode, Self::Error> {
         self.bytecode.get(&code_hash).cloned().ok_or_else(|| {
-            ProviderError::TrieWitnessError(format!("bytecode for {code_hash} not found"))
+            WitnessDbError::TrieWitness(format!("bytecode for {code_hash} not found"))
         })
     }
 
@@ -104,6 +106,6 @@ where
         self.block_hashes_by_block_number
             .get(&block_number)
             .copied()
-            .ok_or(ProviderError::StateForNumberNotFound(block_number))
+            .ok_or(WitnessDbError::StateNotFound(block_number))
     }
 }

@@ -1,3 +1,4 @@
+use crate::error::WitnessDbError;
 use crate::validation::StatelessValidationError;
 use alloc::{format, vec::Vec};
 use alloy_primitives::{Address, B256, U256, keccak256, map::B256Map};
@@ -5,14 +6,13 @@ use alloy_rlp::{Decodable, Encodable};
 use alloy_rpc_types_debug::ExecutionWitness;
 use alloy_trie::{EMPTY_ROOT_HASH, TrieAccount};
 use itertools::Itertools;
-use reth_errors::ProviderError;
-use reth_revm::state::Bytecode;
 use reth_trie_common::{HashedPostState, Nibbles, TRIE_ACCOUNT_RLP_MAX_SIZE};
 use reth_trie_sparse::{
     RevealableSparseTrie, SparseStateTrie, SparseTrie,
     errors::SparseStateTrieResult,
     provider::{DefaultTrieNodeProvider, DefaultTrieNodeProviderFactory},
 };
+use revm_bytecode::Bytecode;
 
 /// Trait for stateless trie implementations that can be used for stateless validation.
 pub trait StatelessTrie: core::fmt::Debug {
@@ -28,13 +28,13 @@ pub trait StatelessTrie: core::fmt::Debug {
     ///
     /// This method will error if the `ExecutionWitness` is not able to guarantee
     /// that the account is missing from the Trie _and_ the witness was complete.
-    fn account(&self, address: Address) -> Result<Option<TrieAccount>, ProviderError>;
+    fn account(&self, address: Address) -> Result<Option<TrieAccount>, WitnessDbError>;
 
     /// Returns the storage slot value that corresponds to the given (address, slot) tuple.
     ///
     /// This method will error if the `ExecutionWitness` is not able to guarantee
     /// that the storage was missing from the Trie _and_ the witness was complete.
-    fn storage(&self, address: Address, slot: U256) -> Result<U256, ProviderError>;
+    fn storage(&self, address: Address, slot: U256) -> Result<U256, WitnessDbError>;
 
     /// Computes the new state root from the `HashedPostState`.
     fn calculate_state_root(
@@ -66,7 +66,7 @@ impl StatelessSparseTrie {
     ///
     /// This method will error if the `ExecutionWitness` is not able to guarantee
     /// that the account is missing from the Trie _and_ the witness was complete.
-    pub fn account(&self, address: Address) -> Result<Option<TrieAccount>, ProviderError> {
+    pub fn account(&self, address: Address) -> Result<Option<TrieAccount>, WitnessDbError> {
         let hashed_address = keccak256(address);
 
         if let Some(bytes) = self.inner.get_account_value(&hashed_address) {
@@ -75,7 +75,7 @@ impl StatelessSparseTrie {
         }
 
         if !self.inner.check_valid_account_witness(hashed_address) {
-            return Err(ProviderError::TrieWitnessError(format!(
+            return Err(WitnessDbError::TrieWitness(format!(
                 "incomplete account witness for {hashed_address:?}"
             )));
         }
@@ -87,7 +87,7 @@ impl StatelessSparseTrie {
     ///
     /// This method will error if the `ExecutionWitness` is not able to guarantee
     /// that the storage was missing from the Trie _and_ the witness was complete.
-    pub fn storage(&self, address: Address, slot: U256) -> Result<U256, ProviderError> {
+    pub fn storage(&self, address: Address, slot: U256) -> Result<U256, WitnessDbError> {
         let hashed_address = keccak256(address);
         let hashed_slot = keccak256(B256::from(slot));
 
@@ -104,14 +104,14 @@ impl StatelessSparseTrie {
             if account.storage_root != EMPTY_ROOT_HASH
                 && !self.inner.check_valid_storage_witness(hashed_address, hashed_slot)
             {
-                return Err(ProviderError::TrieWitnessError(format!(
+                return Err(WitnessDbError::TrieWitness(format!(
                     "incomplete storage witness: prover must supply exclusion proof for slot {hashed_slot:?} in account {hashed_address:?}"
                 )));
             }
         } else if !self.inner.check_valid_account_witness(hashed_address) {
             // ...else if account is missing, validate that the account trie was sufficiently
             // revealed.
-            return Err(ProviderError::TrieWitnessError(format!(
+            return Err(WitnessDbError::TrieWitness(format!(
                 "incomplete account witness for {hashed_address:?}"
             )));
         }
@@ -137,11 +137,11 @@ impl StatelessTrie for StatelessSparseTrie {
         Self::new(witness, pre_state_root)
     }
 
-    fn account(&self, address: Address) -> Result<Option<TrieAccount>, ProviderError> {
+    fn account(&self, address: Address) -> Result<Option<TrieAccount>, WitnessDbError> {
         self.account(address)
     }
 
-    fn storage(&self, address: Address, slot: U256) -> Result<U256, ProviderError> {
+    fn storage(&self, address: Address, slot: U256) -> Result<U256, WitnessDbError> {
         self.storage(address, slot)
     }
 
