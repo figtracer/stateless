@@ -24,13 +24,16 @@ alloy-genesis = { workspace = true, features = ["serde-bincode-compat"] }
 reth-ethereum-consensus.workspace = true
 reth-primitives-traits.workspace = true
 reth-ethereum-primitives = { workspace = true, features = ["serde", "serde-bincode-compat"] }
-reth-errors.workspace = true
 reth-evm.workspace = true
-reth-revm.workspace = true
 reth-trie-common.workspace = true
 reth-trie-sparse.workspace = true
 reth-chainspec.workspace = true
 reth-consensus.workspace = true
+
+# revm
+revm-bytecode.workspace = true
+revm-database-interface.workspace = true
+revm-state.workspace = true
 
 # misc
 thiserror.workspace = true

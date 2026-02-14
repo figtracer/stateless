@@ -14,8 +14,8 @@ use alloc::{
 use alloy_consensus::{BlockHeader, Header};
 use alloy_primitives::{B256, keccak256};
 use reth_chainspec::{EthChainSpec, EthereumHardforks};
+use reth_consensus::ConsensusError;
 use reth_consensus::{Consensus, HeaderValidator};
-use reth_errors::ConsensusError;
 use reth_ethereum_consensus::{EthBeaconConsensus, validate_block_post_execution};
 use reth_ethereum_primitives::{Block, EthPrimitives, EthereumReceipt};
 use reth_evm::{
