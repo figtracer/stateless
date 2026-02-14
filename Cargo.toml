@@ -38,23 +38,23 @@ strip = "symbols"
 stateless = { path = "crates/stateless" }
 
 # reth
-reth-chainspec = { git = "https://github.com/paradigmxyz/reth", branch = "main" }
-reth-consensus = { git = "https://github.com/paradigmxyz/reth", branch = "main" }
+reth-chainspec = { git = "https://github.com/paradigmxyz/reth", branch = "main", default-features = false }
+reth-consensus = { git = "https://github.com/paradigmxyz/reth", branch = "main", default-features = false }
 reth-db = { git = "https://github.com/paradigmxyz/reth", branch = "main" }
 reth-db-api = { git = "https://github.com/paradigmxyz/reth", branch = "main" }
 reth-db-common = { git = "https://github.com/paradigmxyz/reth", branch = "main" }
-reth-ethereum-consensus = { git = "https://github.com/paradigmxyz/reth", branch = "main" }
-reth-ethereum-primitives = { git = "https://github.com/paradigmxyz/reth", branch = "main" }
-reth-evm = { git = "https://github.com/paradigmxyz/reth", branch = "main" }
+reth-ethereum-consensus = { git = "https://github.com/paradigmxyz/reth", branch = "main", default-features = false }
+reth-ethereum-primitives = { git = "https://github.com/paradigmxyz/reth", branch = "main", default-features = false }
+reth-evm = { git = "https://github.com/paradigmxyz/reth", branch = "main", default-features = false }
 reth-evm-ethereum = { git = "https://github.com/paradigmxyz/reth", branch = "main" }
-reth-primitives-traits = { git = "https://github.com/paradigmxyz/reth", branch = "main" }
+reth-primitives-traits = { git = "https://github.com/paradigmxyz/reth", branch = "main", default-features = false }
 reth-provider = { git = "https://github.com/paradigmxyz/reth", branch = "main" }
-reth-revm = { git = "https://github.com/paradigmxyz/reth", branch = "main" }
+reth-revm = { git = "https://github.com/paradigmxyz/reth", branch = "main", default-features = false }
 reth-tracing = { git = "https://github.com/paradigmxyz/reth", branch = "main" }
 reth-trie = { git = "https://github.com/paradigmxyz/reth", branch = "main" }
-reth-trie-common = { git = "https://github.com/paradigmxyz/reth", branch = "main" }
+reth-trie-common = { git = "https://github.com/paradigmxyz/reth", branch = "main", default-features = false }
 reth-trie-db = { git = "https://github.com/paradigmxyz/reth", branch = "main" }
-reth-trie-sparse = { git = "https://github.com/paradigmxyz/reth", branch = "main" }
+reth-trie-sparse = { git = "https://github.com/paradigmxyz/reth", branch = "main", default-features = false }
 
 # alloy
 alloy-consensus = { version = "1.5", default-features = false }
@@ -72,10 +72,10 @@ revm-database-interface = { version = "9.0.0", default-features = false }
 revm-state = { version = "9.0.0", default-features = false }
 
 # misc
-itertools = "0.14"
+itertools = { version = "0.14", default-features = false, features = ["use_alloc"] }
 rayon = "1.8"
-serde = { version = "1.0", features = ["derive"] }
+serde = { version = "1.0", default-features = false, features = ["derive", "alloc"] }
 serde_json = "1.0"
-serde_with = "3.16"
-thiserror = "2.0"
+serde_with = { version = "3.16", default-features = false, features = ["alloc"] }
+thiserror = { version = "2.0", default-features = false }
 walkdir = "2.5"
