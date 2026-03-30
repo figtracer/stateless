@@ -47,11 +47,11 @@ pub use tries::StatelessTrie;
 #[doc(inline)]
 pub use validation::stateless_validation;
 #[doc(inline)]
-pub use validation::stateless_validation_with_trie;
-#[doc(inline)]
 pub use validation::stateless_validation_recovered;
 #[doc(inline)]
 pub use validation::stateless_validation_recovered_with_trie;
+#[doc(inline)]
+pub use validation::stateless_validation_with_trie;
 
 /// Implementation of stateless validation
 pub mod validation;
