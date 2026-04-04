@@ -2,7 +2,7 @@
 set -euo pipefail
 
 ETHEREUM_TESTS_REF="81862e4848585a438d64f911a19b3825f0f4cd95"
-EEST_TESTS_TAG="v4.5.0"
+EEST_TESTS_TAG="v5.4.0"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 EF_TESTS_DIR="$SCRIPT_DIR/../testing/ef-tests"
